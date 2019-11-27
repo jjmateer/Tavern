@@ -4,6 +4,7 @@ const path = require("path");
 const mongoose = require("mongoose");
 const routes = require("./routes");
 const cors = require("cors");
+const authRoutes = require("./routes/api/auth");
 const PORT = process.env.PORT || 3001;
 const passport = require("passport");
 const app = express();
@@ -23,7 +24,7 @@ if (process.env.NODE_ENV === "production") {
 // Passport middleware
 app.use(passport.initialize());
 require("./config/passport-config.js")(passport);
-app.use("/api/users", users);
+app.use("/api/users", authRoutes);
 
 mongoose.connect(dbUrl, {
   useNewUrlParser: true,
