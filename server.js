@@ -2,14 +2,16 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
-// const routes = require("./routes");
-// const cors = require("cors");
+const routes = require("./routes");
+const cors = require("cors");
+const authRoutes = require("./routes/api/auth");
 const PORT = process.env.PORT || 3001;
+const passport = require("passport");
 const app = express();
 
-// app.use(cors());
-// app.use(express.json());
-// app.use(routes);
+app.use(cors());
+app.use(express.json());
+app.use(routes);
 
 var dbUrl = "";
 
@@ -19,11 +21,15 @@ if (process.env.NODE_ENV === "production") {
   dbUrl = "mongodb://localhost/taverndb";
 }
 
+// Passport middleware
+app.use(passport.initialize());
+require("./config/passport-config.js")(passport);
+app.use("/api/users", authRoutes);
+
 mongoose.connect(dbUrl, {
   useNewUrlParser: true,
   useCreateIndex: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false
+  useUnifiedTopology: true
 });
 var db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
