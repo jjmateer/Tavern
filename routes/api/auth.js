@@ -1,9 +1,9 @@
 const db = require("../../models");
-const bcrypt = require("bcryptjs")
+const bcrypt = require("bcryptjs");
 const router = require("express").Router();
 const auth = require("../../middleware/auth");
 const jwt = require("jsonwebtoken");
-// const auth = require("../middleware/auth");
+const keys = require("../../config/keys");
 
 router.post("/register", function (req, res) {
   const { username, email, password } = req.body;
@@ -31,9 +31,7 @@ router.post("/register", function (req, res) {
                   email: user.email
                 }
               });
-              console.log(`User info: ${user}`)
-              console.log(`User token: ${token}`)
-              console.log(`User ${user.id} added to database.`)
+              console.log(`${user.name} added to database.`)
             })
           })
         }

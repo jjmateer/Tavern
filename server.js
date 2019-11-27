@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const routes = require("./routes");
 const cors = require("cors");
 const PORT = process.env.PORT || 3001;
-const router = require("express").Router();
+const passport = require("passport");
 const app = express();
 
 app.use(cors());
@@ -20,11 +20,15 @@ if (process.env.NODE_ENV === "production") {
   dbUrl = "mongodb://localhost/taverndb";
 }
 
+// Passport middleware
+app.use(passport.initialize());
+require("./config/passport-config.js")(passport);
+app.use("/api/users", users);
+
 mongoose.connect(dbUrl, {
   useNewUrlParser: true,
   useCreateIndex: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false
+  useUnifiedTopology: true
 });
 var db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
