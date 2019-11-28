@@ -37,16 +37,15 @@ export const loadUser = () => (dispatch, getState) => {
             });
     }
 }
-export const register = ({ username, email, password }) => dispatch => {
+export const registerUser = (newUser) => dispatch => {
+    // console.log(newUser)
     const config = {
         headers: {
             "Content-Type": "application/json"
         }
     }
 
-    const body = JSON.stringify({ username, email, password });
-
-    axios.post("http://localhost:3001/api/auth/register", body, config)
+    axios.post("http://localhost:3001/api/auth/register", newUser, config)
         .then(res =>
             dispatch({
                 type: REGISTER_SUCCESS,
@@ -61,18 +60,14 @@ export const register = ({ username, email, password }) => dispatch => {
 }
 
 
-export const login = ({ email, password }) => dispatch => {
+export const loginUser = (userData) => dispatch => {
     const config = {
         headers: {
             "Content-Type": "application/json"
         }
     }
 
-
-    const body = JSON.stringify({ email, password });
-
-
-    axios.post("http://localhost:3001/api/auth/login", body, config)
+    axios.post("http://localhost:3001/api/auth/login", userData, config)
         .then(res => dispatch({
             type: LOGIN_SUCCESS,
             payload: res.data
