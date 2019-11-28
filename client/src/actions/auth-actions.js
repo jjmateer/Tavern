@@ -15,29 +15,25 @@ import {
 
 export const loadUser = () => (dispatch) => {
     dispatch({ type: USER_LOADING });
-    const token = localStorage.getItem("jwtToken")
-    const decoded = jwt_decode(token);
-    const config = {
-        header: {
-            "Content-type": "application/json"
-        }
+    const body = {
+        token: localStorage.getItem("jwtToken")
     }
-    if (token) {
-        axios.post("http://localhost:3001/api/auth/user", decoded, config)
-            .then(res =>
+    axios
+        .post('http://localhost:3001/api/auth/user', body)
+        .then(res => {
+                console.log(res.data)
                 dispatch({
                     type: USER_LOADED,
                     payload: res.data
                 })
-            )
-            .catch(err => {
-                dispatch(returnErrors(err.response.data, err.response.status));
-                dispatch({
-                    type: AUTH_ERROR
-                })
+        })
+        .catch(err => {
+            dispatch(returnErrors(err.response.data, err.response.status));
+            dispatch({
+                type: AUTH_ERROR
             });
-    }
-}
+        });
+};
 export const registerUser = newUser => dispatch => {
     const config = {
         headers: {
@@ -87,6 +83,23 @@ export const loginUser = (userData) => dispatch => {
         })
 }
 
+// export const tokenConfig = () => {
+//     const token = localStorage.getItem("jwtToken")
+
+//     const config = {
+//         headers: {
+//             'Content-type': 'application/json'
+//         }
+//     };
+
+//     if (token) {
+//         config.headers['xauthtoken'] = token;
+//     } else {
+//         config.headers.xauthtoken = null;
+//     }
+//     const cheaders = config.headers.xauthtoken;
+//     return cheaders;
+// };
 
 export const logout = () => {
     return {

@@ -85,9 +85,13 @@ router.post("/login", function (req, res) {
 
 
 router.post('/user', (req, res) => {
-  db.User.findById(req.body.id)
+  if(req.body.token) {
+    db.User.findById(req.body.id)
     .select('-password')
     .then(user => res.json(user));
+  } else {
+    res.status(400).json(null)
+  }
 });
 
 module.exports = router;
