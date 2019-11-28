@@ -15,25 +15,30 @@ import {
 
 export const loadUser = () => (dispatch) => {
     dispatch({ type: USER_LOADING });
-    const body = {
-        id: jwt_decode(localStorage.getItem("jwtToken")).id,
-        token: localStorage.getItem("jwtToken")
-    }
-    axios
-        .post('http://localhost:3001/api/auth/user', body)
-        .then(res => {
+    if (localStorage.getItem("jwtToken")) {
+        const body = {
+            id: jwt_decode(localStorage.getItem("jwtToken")).id,
+            token: localStorage.getItem("jwtToken")
+        }
+
+        axios
+            .post('http://localhost:3001/api/auth/user', body)
+            .then(res => {
                 console.log(res.data)
                 dispatch({
                     type: USER_LOADED,
                     payload: res.data
                 })
-        })
-        .catch(err => {
-            dispatch(returnErrors(err.response.data, err.response.status));
-            dispatch({
-                type: AUTH_ERROR
+            })
+            .catch(err => {
+                dispatch(returnErrors(err.response.data, err.response.status));
+                dispatch({
+                    type: AUTH_ERROR
+                });
             });
-        });
+    } else {
+        dispatch({ type: AUTH_ERROR });
+    }
 };
 export const registerUser = newUser => dispatch => {
     const config = {
