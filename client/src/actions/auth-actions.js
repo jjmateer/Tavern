@@ -1,5 +1,6 @@
 import axios from "axios";
-import { returnErrors } from "./error-actions"
+import { returnErrors } from "./error-actions";
+import jwt_decode from "jwt-decode";
 
 import {
     USER_LOADED,
@@ -12,17 +13,17 @@ import {
     REGISTER_FAIL
 } from "./types";
 
-export const loadUser = () => (dispatch, getState) => {
+export const loadUser = () => (dispatch) => {
     dispatch({ type: USER_LOADING });
-    const token = getState().auth.token;
+    const token = localStorage.getItem("jwtToken")
+    const decoded = jwt_decode(token);
     const config = {
         header: {
             "Content-type": "application/json"
         }
     }
     if (token) {
-        const body = { user: getState().auth.user }
-        axios.post("http://localhost:3001/api/auth/user", body, config)
+        axios.post("http://localhost:3001/api/auth/user", decoded, config)
             .then(res =>
                 dispatch({
                     type: USER_LOADED,
@@ -37,21 +38,22 @@ export const loadUser = () => (dispatch, getState) => {
             });
     }
 }
-export const register = ({ username, email, password }) => dispatch => {
+export const registerUser = newUser => dispatch => {
     const config = {
         headers: {
             "Content-Type": "application/json"
         }
     }
 
-    const body = JSON.stringify({ username, email, password });
-
-    axios.post("http://localhost:3001/api/auth/register", body, config)
-        .then(res =>
+    axios.post("http://localhost:3001/api/auth/register", newUser, config)
+        .then(res => {
             dispatch({
                 type: REGISTER_SUCCESS,
                 payload: res.data
-            }))
+            })
+            const { token } = res.data;
+            localStorage.setItem("jwtToken", token);
+        })
         .catch(err => {
             dispatch(returnErrors(err.response.data, err.response.status, "REGISTER_FAIL"));
             dispatch({
@@ -61,22 +63,22 @@ export const register = ({ username, email, password }) => dispatch => {
 }
 
 
-export const login = ({ email, password }) => dispatch => {
+export const loginUser = (userData) => dispatch => {
     const config = {
         headers: {
             "Content-Type": "application/json"
         }
     }
 
-
-    const body = JSON.stringify({ email, password });
-
-
-    axios.post("http://localhost:3001/api/auth/login", body, config)
-        .then(res => dispatch({
-            type: LOGIN_SUCCESS,
-            payload: res.data
-        }))
+    axios.post("http://localhost:3001/api/auth/login", userData, config)
+        .then(res => {
+            dispatch({
+                type: LOGIN_SUCCESS,
+                payload: res.data
+            })
+            const { token } = res.data;
+            localStorage.setItem("jwtToken", token);
+        })
         .catch(err => {
             dispatch(returnErrors(err.response.data, err.response.status, "LOGIN_FAIL"));
             dispatch({

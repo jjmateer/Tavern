@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const userSchema = new Schema({
-    username: {
+    name: {
         type: String,
         required: "Name is Required",
     },
@@ -25,9 +25,6 @@ const userSchema = new Schema({
     userCreated: {
         type: Date,
         default: Date.now
-    },
-    isLoggedin: {
-        type: Boolean
     }
 });
 const User = mongoose.model("User", userSchema);
