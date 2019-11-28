@@ -16,6 +16,7 @@ import {
 export const loadUser = () => (dispatch) => {
     dispatch({ type: USER_LOADING });
     const body = {
+        id: jwt_decode(localStorage.getItem("jwtToken")).id,
         token: localStorage.getItem("jwtToken")
     }
     axios

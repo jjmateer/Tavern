@@ -85,6 +85,7 @@ router.post("/login", function (req, res) {
 
 
 router.post('/user', (req, res) => {
+  console.log(req.body)
   if(req.body.token) {
     db.User.findById(req.body.id)
     .select('-password')
